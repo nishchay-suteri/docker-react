@@ -1,0 +1,15 @@
+FROM node:alpine
+
+WORKDIR /usr/app
+
+# Copying package.json first before copying everything so that if we change something in code only, we don't require to run npm install again
+COPY package.json ./
+RUN npm install
+
+COPY ./ ./
+
+CMD ["npm", "run", "start"]
+
+# Since it is custom file (instead of Dockerfile, we are using Dockerfile.dev), we can't use "docker build ." command
+# So, we'll use foloowing command:-
+# docker build -f <file_name> .
