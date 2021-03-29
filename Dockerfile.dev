@@ -1,15 +1,31 @@
 FROM node:alpine
 
-WORKDIR /usr/app
+# specifying user which will execute RUN, CMD, or ENTRYPOINT instructions will be the node user, as opposed to root (default).
+# these node user changes is required only when we are using the docker volume feature
+USER node
+
+# creating a directory of /home/node/app prior to the WORKDIR instruction. This will prevent a permissions issue since WORKDIR by default will create a directory if it does not exist and set ownership to root.
+RUN mkdir -p /home/node/app
+
+WORKDIR /home/node/app
 
 # Copying package.json first before copying everything so that if we change something in code only, we don't require to run npm install again
-COPY package.json ./
+# The inline chown commands will set ownership of the files you are copying from your local environment to the node user in the container.
+# The end result will be that all files and directories in the project will no longer be owned by root and will instead be owned by the node user.
+COPY --chown=node:node ./package.json ./
 RUN npm install
 
-COPY ./ ./
+# with docker volumes usage, this copy statement is not required, but it is recommended to have it here.
+COPY --chown=node:node ./ ./
 
 CMD ["npm", "run", "start"]
 
 # Since it is custom file (instead of Dockerfile, we are using Dockerfile.dev), we can't use "docker build ." command
 # So, we'll use foloowing command:-
 # docker build -f <file_name> .
+
+# docker volume:-
+# docker run -p 3000:3000 -v /home/node/app/node_modules -v $(pwd):/home/node/app <image_id>
+# the first -v <container_directory> is used since we don't have node_modules in local_directory
+# the second -v <local_directory>:<container_directory> is used to map container directory folders with local directory folders.
+# Now, whenever container references its files, it will be redirected to the local computer's files
