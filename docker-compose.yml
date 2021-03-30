@@ -13,3 +13,15 @@ services:
     volumes: 
       - /home/node/app/node_modules
       - .:/home/node/app # <currrent_local_directory>:<container_directory>
+# for tests, we have 2 options:-
+# option 1. Use the existing react-app service which is already running, and attach to it.(exec command). For this, we need container id, as well as need to remember the command.
+# option 2. Create a new service which is only for testing. It'll solve the option 1 drawbacks, but now we can't interact with the testsuite.
+# we are opting for option 2.
+  tests:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    volumes: 
+      - /home/node/app/node_modules
+      - .:/home/node/app # <currrent_local_directory>:<container_directory>
+    command: ["npm", "run", "test"] # override the default command mentioned in Dockerfile
