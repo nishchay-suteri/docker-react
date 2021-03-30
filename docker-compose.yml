@@ -1,0 +1,15 @@
+# The benefit of docker-compose is to simplify running container.
+# So, even if we have only 1 comtainer, we can use docker-compose
+
+version: '2'
+
+services: 
+  react-app:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    ports:
+      - "3000:3000"
+    volumes: 
+      - /home/node/app/node_modules
+      - .:/home/node/app # <currrent_local_directory>:<container_directory>
