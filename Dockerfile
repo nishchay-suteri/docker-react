@@ -20,6 +20,12 @@ RUN npm run build
 
 FROM nginx
 
+# `EXPOSE <port>` command is basically for the AWS Deployment. 
+# For us(developers), it just mean that we need to map the local port with container port 80. It DOES NOTHING.
+# For AWS Deployment, this command is a MUST. AWS will automatically map the port using this.
+
+EXPOSE 80
+
 COPY --from=0 /usr/app/build /usr/share/nginx/html
 
 # Only copy build directory from Build phase.
