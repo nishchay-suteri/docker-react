@@ -14,3 +14,15 @@ script:
   # docker run -e CI=true <image_id> <default_command> 
   # -e CI=true is required so that test exit with some proper code.
   # if travis ci receives any exit code other than 0 => TEST FAILED
+
+deploy:
+  provider: elasticbeanstalk
+  region: "us-east-1"
+  app: "docker-react"
+  env: "Dockerreact-env"
+  bucket_name: "elasticbeanstalk-us-east-1-688282928763"
+  bucket_path: "docker-react" # Folder inside S3 bucket which we'll use
+  on:
+    branch: master # only deploy the changes when master is updated. (No need to deploy for other dev branches)
+  access_key_id: $AWS_ACCESS_KEY # API Keys which'll give travis the access to deploy in elasticbeanstalk
+  secret_access_key: $AWS_SECRET_KEY    
